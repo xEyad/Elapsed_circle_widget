@@ -49,16 +49,17 @@ class _ElapsedCircleState extends State<ElapsedCircle> with TickerProviderStateM
   late AnimationController controller;
   late Timer timer;
   late List<Color> stagesClrs;
-  int secondsElapsed = 0;
+  int milliSecondsElapsed = 0;
   int stage = 0;
-
+  int animationUpdateDurationInMs = 10;
+  int get expectedMilliSeconds => widget.expectedSeconds*1000;
   @override
   void initState() {
     stagesClrs = [widget.initialColor,widget.secondColor,widget.lateColor];
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) { 
+    timer = Timer.periodic(Duration(milliseconds: animationUpdateDurationInMs), (timer) { 
     setState(() {
-          secondsElapsed++;
-          if(secondsElapsed%widget.expectedSeconds == 0)
+          milliSecondsElapsed+=animationUpdateDurationInMs;
+          if(milliSecondsElapsed%expectedMilliSeconds == 0)
           stage++;
           if(stage >= stagesClrs.length)
           {
@@ -88,7 +89,7 @@ class _ElapsedCircleState extends State<ElapsedCircle> with TickerProviderStateM
   {
     if(!timer.isActive)
       return 1;
-    return secondsElapsed%widget.expectedSeconds/widget.expectedSeconds;
+    return milliSecondsElapsed%expectedMilliSeconds/expectedMilliSeconds;
   }
 
   @override
