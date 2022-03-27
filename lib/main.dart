@@ -23,8 +23,12 @@ class MyHomePage extends StatefulWidget {
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
-class _MyHomePageState extends State<MyHomePage> {
-  
+class _MyHomePageState extends State<MyHomePage> 
+{
+  Color initialColor = Colors.yellow;
+  Color secondColor = Colors.black;
+  Color lateColor = Colors.purple;
+  final ctrl = ElapsedCircleController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,15 +41,29 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: 
         [
-          Text('Current settings:\nexpectedSeconds: 5\nColors in order: [red,black,green]'),
+          Text('''Current settings:
+          expectedSeconds: 5
+          Colors in order: [yellow,black,purple]
+          New colors in order: [green,orange,red]
+          '''),
           SizedBox(height: 10,),
-          ElapsedCircle(initialColor: Colors.red,lateColor: Colors.green,secondColor: Colors.black,expectedSeconds: 5,),
+          ElapsedCircle(
+            controller: ctrl,
+            initialColor: initialColor,secondColor: secondColor,lateColor: lateColor,expectedSeconds: 5,),
         ]),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        onPressed: (){
+          setState(() {            
+            ctrl.updateParameters(
+              initialColor: Colors.green,
+              secondColor: Colors.orange,
+              lateColor: Colors.red,
+            );
+          });
+        },
+        tooltip: 'change colors',
+        child: const Icon(Icons.restore),
       ), 
     );
   }
