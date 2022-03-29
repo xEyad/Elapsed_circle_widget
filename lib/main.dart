@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 10,
           ),
           _parameter(
-              label: "Loop duration(${expectedSeconds}) seconds",
+              label: "Loop duration (${expectedSeconds}) seconds",
               input: Slider(
                 value: expectedSeconds.toDouble(),
                 max: 30,
