@@ -133,13 +133,23 @@ class _ElapsedCircleState extends State<ElapsedCircle> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.square(
-      dimension: _controller.diameter,
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(stagesClrs[stage]),
-        value: getProgress(),
-        strokeWidth: _controller.outerBoundsRadius,
-      ),
+    return Stack(
+      alignment: Alignment.center,
+      children: [        
+        SizedBox.square(
+          dimension: _controller.diameter-_controller.outerBoundsRadius,
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(stagesClrs[stage]),
+            value: getProgress(),
+            strokeWidth: _controller.outerBoundsRadius,
+          ),
+        ),
+        Container(
+          width: _controller.diameter,
+          height: _controller.diameter,
+          decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+        ),
+      ],
     );
   }
 }
@@ -229,7 +239,8 @@ class ElapsedCircleController extends ChangeNotifier
     
     if(this.outerBoundsRadius > this.diameter/2)
     {
-      this.outerBoundsRadius = this.diameter;
+      // this.diameter -=this.outerBoundsRadius;
+      // this.outerBoundsRadius = this.diameter;
     }
 
     notifyListeners();
