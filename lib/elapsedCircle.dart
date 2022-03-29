@@ -92,6 +92,11 @@ class _ElapsedCircleState extends State<ElapsedCircle> with TickerProviderStateM
   void initAnimation()
   {
     timer = Timer.periodic(Duration(milliseconds: animationUpdateDurationInMs), (timer) { 
+    if(!mounted)
+    {
+      timer.cancel();
+      return;
+    }
     setState(() {
         milliSecondsElapsed+=animationUpdateDurationInMs;
         if(milliSecondsElapsed%expectedMilliSeconds == 0)
@@ -121,7 +126,7 @@ class _ElapsedCircleState extends State<ElapsedCircle> with TickerProviderStateM
     timer.cancel();
     initAnimation();
     stagesClrs.clear();
-    stagesClrs.addAll([_controller.initialColor,_controller.secondColor,_controller.lateColor]);
+    stagesClrs.addAll([_controller._initialColor,_controller._secondColor,_controller._lateColor]);
   }
 
   double getProgress()
@@ -137,16 +142,16 @@ class _ElapsedCircleState extends State<ElapsedCircle> with TickerProviderStateM
       alignment: Alignment.center,
       children: [        
         SizedBox.square(
-          dimension: _controller.diameter-_controller.outerBoundsRadius,
+          dimension: _controller._diameter-_controller._outerBoundsRadius,
           child: CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(stagesClrs[stage]),
             value: getProgress(),
-            strokeWidth: _controller.outerBoundsRadius,
+            strokeWidth: _controller._outerBoundsRadius,
           ),
         ),
         Container(
-          width: _controller.diameter,
-          height: _controller.diameter,
+          width: _controller._diameter,
+          height: _controller._diameter,
           decoration: BoxDecoration(border: Border.all(color: Colors.black)),
         ),
       ],
@@ -158,27 +163,34 @@ class _ElapsedCircleState extends State<ElapsedCircle> with TickerProviderStateM
 class ElapsedCircleController extends ChangeNotifier 
 {
   /// The color which the widget starts to draw with
-  late Color initialColor;
+  late Color _initialColor;
+  Color get initialColor => _initialColor;
 
   /// The color which is used on second iteration of animation
-  late Color secondColor;
+  late Color _secondColor;
+  Color get secondColor => _secondColor;
 
   /// The color which is used on third and final iteration of animation
-  late Color lateColor;
+  late Color _lateColor;
+  Color get lateColor => _lateColor;
 
   /// How many seconds a full one color draw should take
-  late int expectedSeconds;
+  late int _expectedSeconds;
+  int get expectedSeconds => _expectedSeconds;
 
   /// Diameter of the circle
-  late double diameter;
+  late double _diameter;
+  double get diameter => _diameter;
 
   /// How much of the outer bounds should be drawn. If this is
   /// half of diameter then circle should not have transparent center.
-  late double outerBoundsRadius;
+  late double _outerBoundsRadius;
+  double get outerBoundsRadius => _outerBoundsRadius;
 
   /// When tracking tag is changed then the animation starts a new with
   /// the initial color.
-  String? trackingTag;
+  String? _trackingTag;
+  String? get trackingTag => _trackingTag;
   
   bool _isInitialized = false;
   ElapsedCircleController();
@@ -196,13 +208,13 @@ class ElapsedCircleController extends ChangeNotifier
       if(_isInitialized)
         return;
       _isInitialized = true;
-      this.initialColor = initialColor;
-      this.secondColor = secondColor;
-      this.lateColor = lateColor;
-      this.expectedSeconds = expectedSeconds;
-      this.diameter = diameter;
-      this.outerBoundsRadius = outerBoundsRadius;
-      this.trackingTag = trackingTag;
+      this._initialColor = initialColor;
+      this._secondColor = secondColor;
+      this._lateColor = lateColor;
+      this._expectedSeconds = expectedSeconds;
+      this._diameter = diameter;
+      this._outerBoundsRadius = outerBoundsRadius;
+      this._trackingTag = trackingTag;
     }
 
   ///will cause the indicator to reset if changed
@@ -217,27 +229,27 @@ class ElapsedCircleController extends ChangeNotifier
     }) 
   {
     if(initialColor!=null)
-      this.initialColor = initialColor;
+      this._initialColor = initialColor;
 
     if(secondColor!=null)
-      this.secondColor = secondColor;
+      this._secondColor = secondColor;
       
     if(lateColor!=null)
-      this.lateColor = lateColor;
+      this._lateColor = lateColor;
       
     if(expectedSeconds!=null)
-      this.expectedSeconds = expectedSeconds;
+      this._expectedSeconds = expectedSeconds;
       
     if(diameter!=null)
-      this.diameter = diameter;
+      this._diameter = diameter;
       
     if(outerBoundsRadius!=null)
-      this.outerBoundsRadius = outerBoundsRadius;
+      this._outerBoundsRadius = outerBoundsRadius;
       
     if(trackingTag!=null)
-      this.trackingTag = trackingTag;
+      this._trackingTag = trackingTag;
     
-    if(this.outerBoundsRadius > this.diameter/2)
+    if(this._outerBoundsRadius > this._diameter/2)
     {
       // this.diameter -=this.outerBoundsRadius;
       // this.outerBoundsRadius = this.diameter;
