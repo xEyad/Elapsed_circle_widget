@@ -29,7 +29,7 @@ class ElapsedCircle extends StatefulWidget {
   /// the initial color.
   final String? trackingTag;
 
-  late final ElapsedCircleController? controller;
+  late ElapsedCircleController? controller;
 
   ElapsedCircle({
     Key? key,
@@ -37,18 +37,31 @@ class ElapsedCircle extends StatefulWidget {
     required this.secondColor,
     required this.lateColor,
     this.expectedSeconds = 5,
-    this.diameter = 5,
-    this.outerBoundsRadius = 1,
+    this.diameter = 50,
+    this.outerBoundsRadius = 5,
     this.trackingTag, 
     this.controller,
   }) : super(key: key)
   {
-    controller ??= ElapsedCircleController._initialize(
+    if(controller == null)
+    {
+      controller = ElapsedCircleController().._initialize(
       expectedSeconds:expectedSeconds,
       diameter:diameter,
       outerBoundsRadius:outerBoundsRadius,
       trackingTag:trackingTag,
       initialColor: initialColor, lateColor: lateColor, secondColor: secondColor);
+    }
+    else if(!controller!._isInitialized)
+    {
+      controller?._initialize(
+      expectedSeconds:expectedSeconds,
+      diameter:diameter,
+      outerBoundsRadius:outerBoundsRadius,
+      trackingTag:trackingTag,
+      initialColor: initialColor, lateColor: lateColor, secondColor: secondColor);
+    }
+    
   }
 
   @override
@@ -120,14 +133,18 @@ class _ElapsedCircleState extends State<ElapsedCircle> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return CircularProgressIndicator(
-      valueColor: AlwaysStoppedAnimation<Color>(stagesClrs[stage]),
-      value: getProgress(),
+    return SizedBox.square(
+      dimension: _controller.diameter,
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(stagesClrs[stage]),
+        value: getProgress(),
+        strokeWidth: _controller.outerBoundsRadius,
+      ),
     );
   }
 }
 
-///more on this can be found here https://www.flutterclutter.dev/flutter/tutorials/create-a-controller-for-a-custom-widget/2021/2149/
+///more on this pattern can be found here https://www.flutterclutter.dev/flutter/tutorials/create-a-controller-for-a-custom-widget/2021/2149/
 class ElapsedCircleController extends ChangeNotifier 
 {
   /// The color which the widget starts to draw with
@@ -152,28 +169,30 @@ class ElapsedCircleController extends ChangeNotifier
   /// When tracking tag is changed then the animation starts a new with
   /// the initial color.
   String? trackingTag;
-
+  
+  bool _isInitialized = false;
   ElapsedCircleController();
 
-  factory ElapsedCircleController._initialize({
+  _initialize({
       required Color initialColor,
       required Color secondColor,
       required Color lateColor,
       int expectedSeconds = 5,
-      double diameter = 5,
-      double outerBoundsRadius = 1,
+      double diameter = 50,
+      double outerBoundsRadius = 5,
       String? trackingTag,
     })
     {
-      final ctrl = ElapsedCircleController();
-      ctrl.initialColor = initialColor;
-      ctrl.secondColor = secondColor;
-      ctrl.lateColor = lateColor;
-      ctrl.expectedSeconds = expectedSeconds;
-      ctrl.diameter = diameter;
-      ctrl.outerBoundsRadius = outerBoundsRadius;
-      ctrl.trackingTag = trackingTag;
-      return ctrl;
+      if(_isInitialized)
+        return;
+      _isInitialized = true;
+      this.initialColor = initialColor;
+      this.secondColor = secondColor;
+      this.lateColor = lateColor;
+      this.expectedSeconds = expectedSeconds;
+      this.diameter = diameter;
+      this.outerBoundsRadius = outerBoundsRadius;
+      this.trackingTag = trackingTag;
     }
 
   ///will cause the indicator to reset if changed
@@ -207,7 +226,12 @@ class ElapsedCircleController extends ChangeNotifier
       
     if(trackingTag!=null)
       this.trackingTag = trackingTag;
-      
+    
+    if(this.outerBoundsRadius > this.diameter/2)
+    {
+      this.outerBoundsRadius = this.diameter;
+    }
+
     notifyListeners();
   }
 }

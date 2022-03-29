@@ -59,6 +59,8 @@ class _MyHomePageState extends State<MyHomePage>
               initialColor: Colors.green,
               secondColor: Colors.orange,
               lateColor: Colors.red,
+              outerBoundsRadius: 80,
+              diameter: 150
             );
           });
         },
