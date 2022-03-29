@@ -31,6 +31,8 @@ class ElapsedCircle extends StatefulWidget {
 
   late ElapsedCircleController? controller;
 
+  late final bool debugMode;
+
   ElapsedCircle({
     Key? key,
     required this.initialColor,
@@ -40,6 +42,7 @@ class ElapsedCircle extends StatefulWidget {
     this.diameter = 50,
     this.outerBoundsRadius = 5,
     this.trackingTag, 
+    this.debugMode = false,
     this.controller,
   }) : super(key: key)
   {
@@ -138,24 +141,42 @@ class _ElapsedCircleState extends State<ElapsedCircle> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    if(widget.debugMode)
+      return _debugIndicator();
+    else
+      return _indicator();
+  }
+  Widget _indicator()
+  {
+    return SizedBox.square(
+        dimension: _controller._diameter-_controller._outerBoundsRadius,
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(stagesClrs[stage]),
+          value: getProgress(),
+          strokeWidth: _controller._outerBoundsRadius,
+        ),
+      );
+  }
+
+  Widget _debugIndicator() {
     return Stack(
-      alignment: Alignment.center,
-      children: [        
-        SizedBox.square(
-          dimension: _controller._diameter-_controller._outerBoundsRadius,
-          child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(stagesClrs[stage]),
-            value: getProgress(),
-            strokeWidth: _controller._outerBoundsRadius,
-          ),
+    alignment: Alignment.center,
+    children: [        
+      SizedBox.square(
+        dimension: _controller._diameter-_controller._outerBoundsRadius,
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(stagesClrs[stage]),
+          value: getProgress(),
+          strokeWidth: _controller._outerBoundsRadius,
         ),
-        Container(
-          width: _controller._diameter,
-          height: _controller._diameter,
-          decoration: BoxDecoration(border: Border.all(color: Colors.black)),
-        ),
-      ],
-    );
+      ),
+      Container(
+        width: _controller._diameter,
+        height: _controller._diameter,
+        decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+      ),
+    ],
+  );
   }
 }
 

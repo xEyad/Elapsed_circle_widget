@@ -11,11 +11,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Elapsed circle demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Elapsed circle demo'),
     );
   }
 }
@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Color lateColor = Colors.purple;
   double selectedDiamterValue = 50;
   double selectedOuterRadiusValue = 5;
+  int expectedSeconds = 5;
   final ctrl = ElapsedCircleController();
 
   @override
@@ -46,7 +47,6 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 100,),
               _controls(),
               Spacer(),
               ElapsedCircle(
@@ -54,32 +54,43 @@ class _MyHomePageState extends State<MyHomePage> {
                 initialColor: initialColor,
                 secondColor: secondColor,
                 lateColor: lateColor,
-                expectedSeconds: 5,
+                expectedSeconds: expectedSeconds,
               ),
-              SizedBox(height: 100,),
+              SizedBox(
+                height: 100,
+              ),
               Spacer(),
             ]),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            
-          });
-        },
-        tooltip: 'Change colors',
-        child: const Icon(Icons.restore),
-      ),
+    
     );
   }
+
   Widget _controls() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          const Text("Set your parameters"),
-
-          SizedBox(height: 10,),
-
+          const Text(
+            "Set your parameters",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          _parameter(
+              label: "Loop duration(${expectedSeconds}) seconds",
+              input: Slider(
+                value: expectedSeconds.toDouble(),
+                max: 30,
+                divisions: 30,
+                label: expectedSeconds.toString(),
+                onChanged: (double value) {
+                  setState(() {
+                    expectedSeconds = value.round();
+                  });
+                },
+              )),
           Row(
             children: [
               Expanded(
@@ -115,9 +126,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ),
-
-          SizedBox(height: 10,),
-
+          SizedBox(
+            height: 10,
+          ),
           Row(
             children: [
               Expanded(
@@ -149,21 +160,25 @@ class _MyHomePageState extends State<MyHomePage> {
                       value: lateColor)),
             ],
           ),
-
-          SizedBox(height: 20,),
-
-          RaisedButton(onPressed: (){
-            ctrl.updateParameters(
-                initialColor: initialColor,
-                secondColor: secondColor,
-                lateColor: lateColor,
-                outerBoundsRadius: selectedOuterRadiusValue,
-                diameter: selectedDiamterValue);
-          },
-          color: Colors.blue,
-          child: Text("Apply parameters",style: TextStyle(color: Colors.white),),
+          SizedBox(
+            height: 20,
+          ),
+          RaisedButton(
+            onPressed: () {
+              ctrl.updateParameters(
+                  initialColor: initialColor,
+                  secondColor: secondColor,
+                  lateColor: lateColor,
+                  outerBoundsRadius: selectedOuterRadiusValue,
+                  expectedSeconds: expectedSeconds,
+                  diameter: selectedDiamterValue);
+            },
+            color: Colors.blue,
+            child: Text(
+              "Apply parameters",
+              style: TextStyle(color: Colors.white),
+            ),
           )
-
         ],
       ),
     );
@@ -207,7 +222,13 @@ class _MyHomePageState extends State<MyHomePage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [Text(label),SizedBox(height: 10,), input],
+      children: [
+        Text(label),
+        SizedBox(
+          height: 10,
+        ),
+        input
+      ],
     );
   }
 }
