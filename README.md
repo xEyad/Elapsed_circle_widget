@@ -1,16 +1,16 @@
-# circle_elapsed_widget
+# Elapsed circle demo
+A looping progress indicator that changes it's color every cycle. more info can be found in this [pdf document](docs/requirments.pdf)
+Online demo link: https://xeyad.github.io/Elapsed_circle_widget/
 
-A new Flutter project.
+# project intent
+In many cases if a developer needs to assess another developer skill, he can do so by checking out his previous works. However that might not be enough indicator to how that specific developer contributed to a large project. thus, This techinical demo shows the technical skill of it's author, since that it is made entirely by 1 person and the source code is checkable. 
 
-## Getting Started
+This technical demo shows everything that you need to asses from code lens. like readability, architecture, modularity, etc, etc
 
-This project is a starting point for a Flutter application.
+# Building for web
+1. flutter build web --release --base-href /algo_visualizer/ 
+1. copy contents of build/web to docs/
+1. duplicate your index.html and rename it to 404.html
+1. git push
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# references
